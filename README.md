@@ -1,152 +1,55 @@
-# Zara Fashion Sales Analysis - Exploratory Data Analysis (EDA)
+# Zara Sales Floor Report — Static Dashboard
 
-## Project Overview
+Dashboard tĩnh (thuần HTML/CSS/JS, không cần Python/Streamlit/backend) dựng lại từ
+`EDA_Zara_Sales_Analysis.ipynb`, dữ liệu lấy từ `Zara_sales_EDA.csv` (20,252 sản phẩm).
 
-This project performs an Exploratory Data Analysis (EDA) on Zara's fashion product dataset to understand product characteristics, sales behavior, and factors associated with customer demand.
+## Cấu trúc
 
-The analysis focuses on identifying patterns in product categories, pricing, promotions, seasonality, and merchandising attributes using Python-based data analysis and visualization techniques.
+```
+index.html    # toàn bộ giao diện + logic xử lý dữ liệu (vanilla JS, Chart.js qua CDN)
+data.json     # dữ liệu đã làm sạch & nén (~526 KB, dạng columnar + encoded categories)
+vercel.json   # cấu hình headers/caching cho Vercel
+```
 
----
+## Deploy lên Vercel
 
-## Business Context
+### Cách 1 — Vercel CLI (nhanh nhất)
+```bash
+npm i -g vercel        # nếu chưa có
+cd zara-dashboard
+vercel                 # làm theo hướng dẫn, chọn "Other" framework preset
+vercel --prod           # deploy bản chính thức
+```
 
-Zara operates in the fast-fashion industry, where understanding customer preferences and managing product performance are important for maintaining competitive advantage.
+### Cách 2 — Kéo thả trên vercel.com
+1. Vào https://vercel.com/new
+2. Chọn "Deploy" → kéo thả cả thư mục `zara-dashboard` (chứa 3 file trên) vào
+3. Framework Preset chọn **Other** (không cần build command, không cần install command)
+4. Bấm Deploy
 
-This project explores Zara's product data to answer questions such as:
+### Cách 3 — Qua GitHub
+1. Push thư mục này lên một repo GitHub
+2. Vào vercel.com → Add New Project → Import repo đó
+3. Framework Preset: **Other**, Build Command: để trống, Output Directory: để trống (root)
+4. Deploy
 
-- Which product categories dominate Zara's assortment?
-- How are sales distributed across products?
-- Does pricing influence product demand?
-- Are promoted products associated with higher sales?
-- How do product attributes relate to sales performance?
+Không cần biến môi trường, không cần build step — đây là site tĩnh thuần.
 
----
+## Những gì dashboard thể hiện (bám theo notebook gốc)
 
-## Dataset Description
+- **KPI tổng quan**: tổng SKU, giá TB, sản lượng TB, tỉ lệ khuyến mãi — cập nhật theo bộ lọc
+- **Phân bố 1 chiều**: histogram giá & sản lượng, tỉ lệ khuyến mãi/theo mùa/phân khúc giá
+- **Vị trí trưng bày** (Aisle / End-cap / Front of Store) dạng sơ đồ mặt bằng cửa hàng — vùng càng đỏ đậm sản lượng càng cao
+- **Tác động khuyến mãi & mùa vụ**: so sánh sản lượng trung bình có/không khuyến mãi, theo mùa/quanh năm
+- **Giá vs sản lượng**: scatter plot + đồng hồ đo hệ số tương quan Pearson (r ≈ −0.34, đúng số liệu từ notebook)
+- **Phân tích theo giới tính / mùa / chất liệu**
+- **Top 10 sản phẩm bán chạy nhất** theo bộ lọc hiện tại
 
-**Dataset:** Zara Fashion Products Dataset (Kaggle)
+Bộ lọc (khuyến mãi, theo mùa, giới tính, mùa, phân khúc giá) chạy hoàn toàn phía client —
+mọi biểu đồ và KPI tính lại tức thời khi đổi bộ lọc, không cần gọi server.
 
-**Records:** 20,000+ products
+## Tuỳ biến / cập nhật dữ liệu
 
-**Features:** 17 columns
-
-The dataset contains information about:
-
-- Product ID
-- Product Position
-- Promotion status
-- Product Category
-- Seasonality
-- Sales Volume
-- Brand
-- Product Description
-- Price
-- Currency
-- Material
-- Origin
-- Product Section
-
----
-
-## Tools & Technologies
-
-- Python
-- Pandas
-- NumPy
-- Matplotlib
-- Seaborn
-- Jupyter Notebook
-
----
-
-## Project Workflow
-
-### 1. Data Understanding
-
-- Load dataset
-- Explore dataset structure
-- Check data types
-- Identify missing values and inconsistencies
-
-### 2. Data Cleaning
-
-Performed preprocessing steps:
-
-- Fixed column formatting
-- Converted price values into numeric format
-- Checked duplicated records
-- Handled missing values
-- Prepared dataset for analysis
-
-### 3. Exploratory Data Analysis
-
-### Univariate Analysis
-
-Analyzed individual variables:
-
-- Product category distribution
-- Product position distribution
-- Sales volume distribution
-- Price distribution
-- Promotion distribution
-- Seasonal product distribution
-- Material distribution
-- Product section distribution
-
-
-### Bi-variate Analysis
-
-Explored relationships between variables:
-
-- Product category vs sales volume
-- Price vs sales volume
-- Promotion vs sales volume
-- Product position vs sales volume
-- Seasonality vs sales performance
-- Material vs sales volume
-
-
-### Multi-variate Analysis
-
-Investigated combined effects of multiple attributes:
-
-- Correlation between numerical features
-- Category, price, and sales relationship
-- Promotion and product performance patterns
-- Key factors associated with sales volume
-
----
-
-## Key Findings
-
-The analysis highlights several patterns:
-
-- Sales performance varies significantly across different product categories
-- Zara's product portfolio is concentrated in specific fashion segments
-- Price distribution reflects Zara's fast-fashion positioning
-- Promotions show differences in customer demand patterns
-- Multiple product attributes jointly influence sales performance
-
----
-
-## Dashboard Preview
-
-(Add dashboard screenshot here)
-
----
-
-## Future Improvements
-
-Possible extensions:
-
-- Build a sales prediction model
-- Perform customer/product segmentation
-- Create an interactive dashboard using Power BI or Streamlit
-- Apply machine learning models to predict high-performing products
-
----
-
-## Author
-
-Data Analytics Project  
-Exploratory Data Analysis using Python
+Nếu muốn thay dữ liệu mới, chạy lại đoạn script Python sau (cùng logic làm sạch như
+notebook: dedup, bins giá 0-30-70-150-1000, mã hoá category) để sinh `data.json` mới,
+rồi thay file là xong — không cần sửa `index.html`.
