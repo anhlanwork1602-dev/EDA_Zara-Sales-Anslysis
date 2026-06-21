@@ -129,4 +129,24 @@ The analysis highlights several patterns:
 
 ---
 
-## Project Structure
+## Dashboard Preview
+
+(Add dashboard screenshot here)
+
+---
+
+## Future Improvements
+
+Possible extensions:
+
+- Build a sales prediction model
+- Perform customer/product segmentation
+- Create an interactive dashboard using Power BI or Streamlit
+- Apply machine learning models to predict high-performing products
+
+---
+
+## Author
+
+Data Analytics Project  
+Exploratory Data Analysis using Python
